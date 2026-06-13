@@ -1,0 +1,74 @@
+# Trap genre profile. Genre is data, not code — the engine reads this; it has
+# no genre-specific branches. New genres are new files like this one.
+name: trap
+
+bpm:
+  min: 130
+  max: 160
+  default: 140
+  feel: halftime          # snare lands on beat 3, spacious low end
+
+# Role activation. weight = probability a role is active for a given cook
+# (sampled with the cook's seed). 1.0 = always on, 0.0 = always off.
+activation:
+  CHORDS: 1.0
+  LEAD: 0.85
+  COUNTER: 0.6
+  BASS_808: 1.0           # 808 carries the low end
+  KICK: 0.4               # sparse-or-absent, layered under the 808 when present
+  SNARE: 1.0
+  HATS: 1.0
+  PERC: 0.5
+
+# Swing applies only to the listed roles, by this amount (0..1 -> fraction of
+# a subdivision the off-beats are pushed late).
+swing:
+  amount: 0.18
+  roles: [HATS]
+
+# Rhythm character per drum role. Patterns are interpreted by stems.py.
+rhythm:
+  KICK:
+    density: 0.3          # sparse
+    syncopation: 0.6
+  SNARE:
+    pattern: halftime     # beat 3
+    ghost_notes: 0.1
+  HATS:
+    base_division: 0.5    # 8th-note grid (in beats)
+    roll_frequency: 0.35  # how often hat rolls appear, scales with energy
+    roll_divisions: [0.25, 0.125, 0.0833]  # 16th, 32nd, triplet-32nd rolls
+  PERC:
+    density: 0.25
+
+# Progression family weights (must reference keys in theory.PROGRESSION_FAMILIES).
+progressions:
+  i-VI-III-VII: 3.0
+  i-III-VII-VI: 2.0
+  i-VII-VI-VII: 1.5
+  i-iv-v: 1.0
+  i-v-VI-iv: 1.0
+
+# Density curves: multiplier applied to note density as a function of energy.
+# The engine multiplies a role's base density by (low + (high-low)*energy).
+density:
+  CHORDS: {low: 0.6, high: 1.0}
+  LEAD:   {low: 0.4, high: 1.1}
+  COUNTER: {low: 0.3, high: 0.9}
+  BASS_808: {low: 0.7, high: 1.0}
+
+# Gesture tendencies (0..1 multipliers on the default gesture amplitudes).
+gestures:
+  space_into_hook: 1.0    # the signature SPACE swell before each hook
+  cutoff_open: 1.0
+  width_spread: 1.0
+  drive_on_808: 1.0
+
+# Default aesthetic
+aesthetic:
+  scale_weights:
+    minor: 4.0
+    harmonic_minor: 1.0
+    phrygian: 1.0
+    dorian: 0.5
+  borrowed_chord_prob: 0.08

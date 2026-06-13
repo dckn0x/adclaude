@@ -1,0 +1,63 @@
+# Boom-bap genre profile. Stage 8 style modes (dilla/madlib/ninth) imply this.
+name: boombap
+
+bpm:
+  min: 80
+  max: 96
+  default: 88
+  feel: straight          # KICK + SNARE backbone
+
+activation:
+  CHORDS: 0.7             # CHOPS typically the lead voice; chords support
+  LEAD: 0.6
+  COUNTER: 0.5
+  BASS_808: 0.9           # bass demoted to root-note support
+  KICK: 1.0               # mandatory backbone
+  SNARE: 1.0
+  HATS: 1.0
+  PERC: 0.6
+
+# Swing on the whole kit.
+swing:
+  amount: 0.22
+  roles: [KICK, SNARE, HATS, PERC]
+
+rhythm:
+  KICK:
+    density: 0.6
+    syncopation: 0.7      # kicks syncopated against the 2/4 snare backbeat
+  SNARE:
+    pattern: backbeat     # beats 2 and 4
+    ghost_notes: 0.35     # ghost-note variation
+  HATS:
+    base_division: 0.5    # 8th-note grid, swung
+    roll_frequency: 0.15
+    roll_divisions: [0.25]
+  PERC:
+    density: 0.3
+
+progressions:
+  i-VI-III-VII: 2.0
+  i-iv-VII-III: 2.0
+  i-III-VII-VI: 1.5
+  i-iv-v: 1.5
+  i-VI-iv-v: 1.0
+
+density:
+  CHORDS: {low: 0.5, high: 0.9}
+  LEAD:   {low: 0.4, high: 1.0}
+  COUNTER: {low: 0.3, high: 0.8}
+  BASS_808: {low: 0.6, high: 0.85}
+
+gestures:
+  space_into_hook: 0.8
+  cutoff_open: 0.9
+  width_spread: 0.8
+  drive_on_808: 0.7
+
+aesthetic:
+  scale_weights:
+    minor: 3.0
+    dorian: 2.0
+    harmonic_minor: 1.0
+  borrowed_chord_prob: 0.06

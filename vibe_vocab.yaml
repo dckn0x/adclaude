@@ -1,0 +1,46 @@
+# Vibe vocabulary: maps the producer's words to concrete parameter moves.
+# The co-producer agent consults this and proposes additions. Grow it over time.
+#
+# Each entry lists deltas/multipliers the engine applies. Unknown keys are
+# ignored, so the table can stay ahead of the engine.
+
+darker:
+  description: "shift mode/register/brightness toward gloom"
+  scale_prefer: [phrygian, harmonic_minor, minor]
+  register_shift: -12          # drop melodic content an octave
+  cutoff_baseline: -20         # darker filter baseline
+
+brighter:
+  description: "open up, lift register"
+  scale_prefer: [dorian, minor]
+  register_shift: +12
+  cutoff_baseline: +20
+
+more_bounce:
+  description: "more swing and syncopation"
+  swing_amount: +0.08
+  syncopation: +0.2
+
+too_clean:
+  description: "add grit, drive, humanization"
+  drive: +18
+  humanize_jitter: +0.02
+  sample_cast_prefer: [dusty, vinyl, lofi]
+
+thinner:
+  description: "reduce density"
+  density_factor: 0.6
+
+fuller:
+  description: "increase density"
+  density_factor: 1.4
+
+harder:
+  description: "more energy, punchier drums"
+  energy_shift: +0.15
+  drive: +10
+
+softer:
+  description: "less energy, gentler"
+  energy_shift: -0.15
+  cutoff_baseline: -10

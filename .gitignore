@@ -45,3 +45,7 @@ __pycache__/
 .pytest_cache/
 dist/
 *.egg-info/
+
+# generated cook outputs
+cooks/*
+!cooks/.gitkeep
