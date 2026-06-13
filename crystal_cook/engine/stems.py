@@ -355,13 +355,22 @@ def apply_transitions(ctx: GenContext, stems: dict[str, Stem]) -> None:
         sec = ctx.sections[si]
         sec_start = ctx.section_start_beat(si)
         last_bar_start = sec_start + (sec.length_bars - 1) * BEATS_PER_BAR
-        # Hat roll into the downbeat (intensity from target energy).
+        # Hat fill into the downbeat: replace the last beat of the bar with
+        # a 4-hit 16th-note fill (rising velocity) instead of stacking on top
+        # of the existing 8th-note grid. High-energy hooks get open hat at the top.
         if hats is not None and Role.HATS.value in sec.active_roles:
-            rdiv = 0.125 if nxt.energy > 0.7 else 0.25
-            t = last_bar_start + 2.0
-            while t < last_bar_start + BEATS_PER_BAR - 1e-6:
-                _add_drum(ctx, hats, t, HAT_CLOSED, sec, si, "fill", vel_scale=0.7)
-                t += rdiv
+            fill_start = last_bar_start + 3.0   # last beat of the bar
+            for hit_i, offset in enumerate([0.0, 0.25, 0.5, 0.75]):
+                # Remove any normal hat that already sits in this window.
+                hats.notes = [
+                    n for n in hats.notes
+                    if not (n.section_index == si
+                            and abs(n.start_beat - (fill_start + offset)) < 0.1)
+                ]
+                pitch = HAT_OPEN if (hit_i == 3 and nxt.energy > 0.7) else HAT_CLOSED
+                vel_scale = 0.5 + 0.15 * hit_i   # escalate: 0.5 → 0.65 → 0.8 → 0.95
+                _add_drum(ctx, hats, fill_start + offset, pitch, sec, si, "fill",
+                          vel_scale=vel_scale)
         # Mute bass on the final beat before the hook.
         if bass is not None:
             cutoff = last_bar_start + 3.0
@@ -395,14 +404,26 @@ def apply_verse_derivation(ctx: GenContext, stems: dict[str, Stem]) -> None:
             src_notes = [n for n in stem.notes if n.section_index == src]
             if not src_notes:
                 continue
-            # Drop everything currently in the derived section.
+
+            # Build a per-bar displacement map: each bar gets ONE consistent
+            # shift so all voices in that bar stay coherent with each other.
+            # Only 2-3 bars are displaced; the rest land where they were.
+            bar_shifts: dict[int, float] = {}
+            n_bars = sec.length_bars
+            shifted_bars = r.sample(range(n_bars), min(3, n_bars))
+            for b in shifted_bars:
+                bar_shifts[b] = r.choice([-0.25, 0.25])  # 16th-note grid only
+
+            # Drop everything currently in the derived section (fresh slate).
             stem.notes = [n for n in stem.notes if n.section_index != si]
+
             for n in src_notes:
-                if r.random() < 0.25:        # fragment reuse: omit ~1/4 of notes
+                if r.random() < 0.2:   # drop ~1 in 5 notes for fragment feel
                     continue
                 new_start = n.start_beat + delta
-                if r.random() < 0.5:         # rhythmic displacement on ~half
-                    new_start += r.choice([-0.25, 0.25, 0.125])
+                # Which bar does this note fall in (relative to the derived section)?
+                bar_idx = int((new_start - sec_start) // BEATS_PER_BAR)
+                new_start += bar_shifts.get(bar_idx, 0.0)
                 # Keep within the derived section's time window.
                 if new_start < sec_start or new_start >= sec_start + sec_len_beats:
                     continue

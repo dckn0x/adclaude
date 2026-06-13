@@ -36,8 +36,8 @@ rhythm:
     ghost_notes: 0.1
   HATS:
     base_division: 0.5    # 8th-note grid (in beats)
-    roll_frequency: 0.35  # how often hat rolls appear, scales with energy
-    roll_divisions: [0.25, 0.125, 0.0833]  # 16th, 32nd, triplet-32nd rolls
+    roll_frequency: 0.18  # how often mid-bar hat rolls appear, scales with energy
+    roll_divisions: [0.25]   # 16th-note rolls only; no 32nds until Stage 6 synth exists
   PERC:
     density: 0.25
 
